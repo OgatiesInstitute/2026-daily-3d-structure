@@ -3,17 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iron Skeleton - Pure Structure</title>
+    <title>Nikkei Topological Structure: 2026-04-07</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
-        body { margin: 0; background-color: #000000; overflow: hidden; }
+        body { margin: 0; background-color: #000000; overflow: hidden; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
         canvas { display: block; }
+        
+        /* 画面左上の白タイトル */
+        #title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 10;
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
+    <div id="title">Nikkei Topological Structure: 2026-04-07</div>
     <script>
-        let scene, camera, renderer, controls, points;
+        let scene, camera, renderer, controls, points, lines;
 
         function init() {
             scene = new THREE.Scene();
@@ -29,8 +43,8 @@
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
-            controls.autoRotate = true; // 自動回転を有効化
-            controls.autoRotateSpeed = 0.5;
+            controls.autoRotate = true; 
+            controls.autoRotateSpeed = 0.7; // 少し回転を速めて躍動感を出しました
 
             createStructure();
             animate();
@@ -38,41 +52,69 @@
 
         function createStructure() {
             if (points) scene.remove(points);
+            if (lines) scene.remove(lines);
 
             const geometry = new THREE.BufferGeometry();
             const positions = [];
+            const pts = [];
             
-            // --- 点の数を増やす設定 ---
-            const numPoints = 1000; // ここを増やすことで密度が変わります
+            // 点の数（密度）
+            const numPoints = 1000; 
 
             for (let i = 0; i < numPoints; i++) {
-                // Connectivity=1.6付近までに収まるよう範囲を調整
-                // データの「鉄の骨格」をイメージした垂直方向の分布
-                const x = (Math.random() - 0.5) * 8;
-                const y = (Math.random() - 0.5) * 12;
-                const z = (Math.random() - 0.5) * 8;
+                const x = (Math.random() - 0.5) * 10;
+                const y = (Math.random() - 0.5) * 14;
+                const z = (Math.random() - 0.5) * 10;
                 
                 positions.push(x, y, z);
+                pts.push(new THREE.Vector3(x, y, z));
             }
 
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-            // 点の素材：純粋なオレンジ、発光感を出すために透明度を調整
-            const material = new THREE.PointsMaterial({ 
-                size: 0.15, 
-                color: 0xFF8800,
+            const orangeColor = new THREE.Color().setRGB(1.0, 0.5, 0.0);
+
+            const pointMaterial = new THREE.PointsMaterial({ 
+                size: 0.12, 
+                color: orangeColor,
                 transparent: true,
-                opacity: 0.8,
+                opacity: 0.9,
                 sizeAttenuation: true
             });
 
-            points = new THREE.Points(geometry, material);
+            points = new THREE.Points(geometry, pointMaterial);
             scene.add(points);
+
+            // 線でつなぐロジック
+            const linePositions = [];
+            const threshold = 1.4; // 接続の密接度
+
+            for (let i = 0; i < pts.length; i++) {
+                for (let j = i + 1; j < pts.length; j++) {
+                    const dist = pts[i].distanceTo(pts[j]);
+                    if (dist < threshold) {
+                        linePositions.push(pts[i].x, pts[i].y, pts[i].z);
+                        linePositions.push(pts[j].x, pts[j].y, pts[j].z);
+                    }
+                }
+            }
+
+            const lineGeometry = new THREE.BufferGeometry();
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color: orangeColor,
+                transparent: true, 
+                opacity: 0.35 
+            });
+            
+            lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(lines);
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            controls.update(); // autoRotateを動作させるために必要
+            controls.update(); 
             renderer.render(scene, camera);
         }
 
