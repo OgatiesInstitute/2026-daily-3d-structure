@@ -72,15 +72,15 @@
 
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-            const orangeColor = new THREE.Color().setRGB(1.0, 0.7, 0.1);
+            const orangeColor = new THREE.Color().setRGB(1.0, 0.56, 0.0);
 
             const pointMaterial = new THREE.PointsMaterial({ 
-    size: 0.18,              // 点をわずかに大きくして光の粒を強調
+    size: 0.16, 
     color: orangeColor,
     transparent: true,
-    opacity: 1.0,            // 透明度をなくしてハッキリさせる
+    opacity: 1.0, // 密度感を出すために不透明度を最大に
     sizeAttenuation: true,
-    blending: THREE.AdditiveBlending // 【重要】重なった部分が白く光る設定
+    blending: THREE.AdditiveBlending // 重なった部分を白熱させる
 });
 
             points = new THREE.Points(geometry, pointMaterial);
@@ -104,10 +104,11 @@
             lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
 
             const lineMaterial = new THREE.LineBasicMaterial({ 
-                color: orangeColor,
-                transparent: true, 
-                opacity: 0.35 
-            });
+    color: orangeColor,
+    transparent: true, 
+    opacity: 0.5, // 線も以前より少しだけハッキリさせる
+    blending: THREE.AdditiveBlending // 線が重なる部分も輝かせる
+});
             
             lines = new THREE.LineSegments(lineGeometry, lineMaterial);
             scene.add(lines);
