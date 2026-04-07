@@ -72,15 +72,16 @@
 
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-            const orangeColor = new THREE.Color().setRGB(1.0, 0.5, 0.0);
+            const orangeColor = new THREE.Color().setRGB(1.0, 0.7, 0.1);
 
             const pointMaterial = new THREE.PointsMaterial({ 
-                size: 0.12, 
-                color: orangeColor,
-                transparent: true,
-                opacity: 0.9,
-                sizeAttenuation: true
-            });
+    size: 0.18,              // 点をわずかに大きくして光の粒を強調
+    color: orangeColor,
+    transparent: true,
+    opacity: 1.0,            // 透明度をなくしてハッキリさせる
+    sizeAttenuation: true,
+    blending: THREE.AdditiveBlending // 【重要】重なった部分が白く光る設定
+});
 
             points = new THREE.Points(geometry, pointMaterial);
             scene.add(points);
