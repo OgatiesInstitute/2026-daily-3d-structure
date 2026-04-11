@@ -12,21 +12,24 @@
         canvas { display: block; }
         #title {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 25px;
+            left: 25px;
             color: #FFFFFF;
             font-size: 18px;
             font-weight: bold;
             z-index: 10;
             pointer-events: none;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
     <div id="title">
-        <div style="font-size: 20px; letter-spacing: 0.1em; margin-bottom: 4px;">NIKKEI REAL-TIME TOPOLOGY</div>
-        <div style="font-size: 14px; opacity: 0.8; font-weight: normal;">MARKET DEPTH // 56924.11 // 10 APR 2026</div>
+        <div style="font-size: 22px; margin-bottom: 6px;">Nikkei Real-Time Topology</div>
+        <div style="font-size: 14px; opacity: 0.7; font-weight: normal; letter-spacing: 1px;">
+            Market Sculpture // Value: 56924.11 // 10 APR 2026
+        </div>
     </div>
     <script>
         let scene, camera, renderer, controls, points, lines;
@@ -39,7 +42,7 @@
             scene.background = new THREE.Color(0x000000);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 15);
+            camera.position.set(0, 8, 18);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -49,7 +52,7 @@
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.autoRotate = true; 
-            controls.autoRotateSpeed = 0.7; 
+            controls.autoRotateSpeed = 0.4; // Elegant, slow rotation
 
             createStructure();
             animate();
@@ -62,10 +65,11 @@
             const geometry = new THREE.BufferGeometry();
             const positions = [];
             const pts = [];
-            const numPoints = 1000; 
+            const numPoints = 1200; // Dense, jewelry-like texture
 
-            const heightScale = nikkei_value / 4000; 
-            const spreadScale = 10 * volume_ratio;   
+            // Logic: Vertical = Price, Horizontal = Volume
+            const heightScale = nikkei_value / 4200; 
+            const spreadScale = 11 * volume_ratio;   
 
             for (let i = 0; i < numPoints; i++) {
                 const x = (Math.random() - 0.5) * spreadScale;
@@ -77,15 +81,14 @@
 
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-            // --- 元の金（ゴールド）に戻すためのカラー設定 ---
-            // 鮮やかすぎるオレンジではなく、少し白みがかったゴールド (setRGB(1.0, 0.8, 0.4))
-            const originalGoldColor = new THREE.Color().setRGB(1.0, 0.8, 0.4);
+            // 18K Champagne Gold Aesthetic (Cartier / Van Cleef inspired)
+            const jewelryGold = new THREE.Color().setRGB(1.0, 0.84, 0.48);
 
             const pointMaterial = new THREE.PointsMaterial({ 
-                size: 0.16, 
-                color: originalGoldColor,
+                size: 0.15, 
+                color: jewelryGold,
                 transparent: true,
-                opacity: 0.8, // 少し透明度を入れてパステル感を出す
+                opacity: 0.9,
                 sizeAttenuation: true,
                 blending: THREE.AdditiveBlending 
             });
@@ -94,7 +97,7 @@
             scene.add(points);
 
             const linePositions = [];
-            const threshold = 1.4 * volume_ratio; 
+            const threshold = 1.35 * volume_ratio; 
 
             for (let i = 0; i < pts.length; i++) {
                 for (let j = i + 1; j < pts.length; j++) {
@@ -110,9 +113,9 @@
             lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
 
             const lineMaterial = new THREE.LineBasicMaterial({ 
-                color: originalGoldColor,
+                color: jewelryGold,
                 transparent: true, 
-                opacity: 0.3, // 線はやわらかく
+                opacity: 0.22, // Delicate gold-thread work
                 blending: THREE.AdditiveBlending 
             });
             
